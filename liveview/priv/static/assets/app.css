@@ -1268,6 +1268,10 @@ select {
   width: 1px;
 }
 
+.w-32 {
+  width: 8rem;
+}
+
 .max-w-2xl {
   max-width: 42rem;
 }
@@ -1408,6 +1412,10 @@ select {
 
 .gap-8 {
   gap: 2rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
 }
 
 .gap-x-1 {
