@@ -1,0 +1,5 @@
+---
+triple:          'x86_64-apple-darwin'
+binary-path:     '/Users/arun/projects/phonix_liveview/liveview/_build/dev/lib/argon2_elixir/priv/argon2_nif.so'
+relocations:     []
+...

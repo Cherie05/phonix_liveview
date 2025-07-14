@@ -1,0 +1,49 @@
+<div
+  class="relative inline-block text-left z-50"
+  phx-click-away="close"
+  phx-window-keydown="close" phx-key="escape"
+>
+  <div>
+    <button
+      type="button"
+      phx-click="toggle"
+      class="inline-flex w-full text-gray-700 justify-center gap-x-1.5 rounded-md  px-3 py-2  items-center "
+      aria-haspopup="true"
+      aria-expanded={@dropdown_open}
+    >
+      Profile
+      <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd"
+              d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd" />
+      </svg>
+    </button>
+  </div>
+
+  <%= if @dropdown_open do %>
+    <div
+      id="options-menu"
+      class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none
+             transition ease-out duration-100 transform scale-100 opacity-100"
+      role="menu" style="z-index: 999;"
+    >
+      <div class="py-1" role="none">
+        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem">Account settings</a>
+        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem">Support</a>
+        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem">License</a>
+        <!-- lib/liveview_web/live/templates/dropdown.html.heex -->
+        <form method="post" action={~p"/logout"} role="none">
+          <input type="hidden" name="_csrf_token" value={@csrf_token} />
+
+          <button
+            type="submit"
+            class="block w-full px-4 py-2 text-left text-sm text-gray-700"
+            role="menuitem">
+            Sign out
+          </button>
+        </form>
+
+      </div>
+    </div>
+  <% end %>
+</div>

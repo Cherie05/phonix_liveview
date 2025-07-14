@@ -1,0 +1,66 @@
+<!-- lib/liveview_web/live/navbar_live_html/navbar.html.heex -->
+<nav
+  class="bg-white sticky top-0 z-50 p-3"
+  phx-click-away="close_menu"
+  phx-window-keydown="close_menu" phx-key="escape"
+>
+  <div class="w-full max-w-7xl mx-auto px-4">
+    <div class="flex justify-between">
+
+      <div class="flex space-x-4">
+        <!-- logo -->
+        <a href="#" class="flex items-center py-5 px-2 text-gray-700 hover:text-gray-900">
+          <svg class="h-6 w-6 mr-1 text-blue-400" xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+          <span class="font-bold">Better Dev</span>
+        </a>
+
+        <!-- primary nav (desktop) -->
+        <div class="hidden md:flex items-center space-x-1">
+           <a href="#" class="py-5 px-3 text-gray-700 hover:text-gray-900">Pricing</a>
+          <div class="text-gray-700 z-30">
+            <%= live_render(@socket, LiveviewWeb.DropdownLive, id: "dropdown") %>
+          </div>
+         
+        </div>
+      </div>
+
+      <!-- secondary nav (desktop) -->
+      <div class="hidden md:flex items-center space-x-1">
+        <a href={~p"/"} class="py-5 px-3">Login</a>
+        <a href={~p"/signup"}
+           class="py-2 px-3 bg-yellow-400 hover:bg-yellow-300
+                  text-yellow-900 hover:text-yellow-800 rounded
+                  transition duration-300">
+          Signup
+        </a>
+      </div>
+
+      <!-- mobile button -->
+      <div class="md:hidden flex items-center">
+        <button
+          phx-click="toggle_menu"
+          class="inline-flex items-center justify-center p-2"
+          aria-label="Toggle menu"
+        >
+          <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- mobile menu -->
+  <div class={["mobile-menu md:hidden", if(@menu_open, do: "", else: "hidden")]}>
+    <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-200">Features</a>
+    <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-200">Pricing</a>
+    <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-200">Login</a>
+    <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-200">Signup</a>
+  </div>
+</nav>
