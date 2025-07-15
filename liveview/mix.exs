@@ -59,7 +59,8 @@ defmodule Liveview.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
        {:argon2_elixir, "~> 3.0"},
-       {:phoenix_html_helpers, "~> 1.0"}
+       {:phoenix_html_helpers, "~> 1.0"},
+       {:kaffy, "~> 0.10.3"},
     ]
   end
 

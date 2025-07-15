@@ -11,7 +11,15 @@ defmodule LiveviewWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  
+  # serve Kaffy’s CSS/JS under “/kaffy”
+plug Plug.Static,
+  at: "/kaffy",
+  from: :kaffy,
+  gzip: false,
+  only: ~w(assets)
+
+
+
 
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],

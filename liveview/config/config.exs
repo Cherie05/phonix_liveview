@@ -7,7 +7,14 @@
 # General application configuration
 import Config
 
+config :kaffy,
+  otp_app: :liveview,               # ← your app name
+  ecto_repo: Liveview.Repo,         # ← your repo module
+  router: LiveviewWeb.Router,       # ← your Phoenix router
+  admin_title: "Liveview Admin",    # (optional)
+  home_page: [schema: [:accounts, :user]]
 
+  
 config :liveview,
   ecto_repos: [Liveview.Repo],
   generators: [timestamp_type: :utc_datetime]

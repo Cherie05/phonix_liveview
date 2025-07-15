@@ -12,6 +12,24 @@ defmodule LiveviewWeb.Router do
 
   end
 
+   # Simple admin pipeline—extends :browser with JSON support
+  pipeline :admin do
+    plug :accepts, ["html", "json"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
+  # … your existing scopes …
+
+  # mount Kaffy under /admin
+  scope "/admin" do
+    pipe_through [:admin]
+    use Kaffy.Routes, scope: "/admin"
+  end
+  
+
   pipeline :api do
     plug :accepts, ["json"]
   end
