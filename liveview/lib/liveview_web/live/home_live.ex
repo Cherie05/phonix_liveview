@@ -6,7 +6,14 @@ defmodule LiveviewWeb.HomeLive do
   embed_templates "templates/*"
 
 
-  
+  alias Liveview.Catalog
+
+  @impl true
+  def mount(_params, _session, socket) do
+    products = Catalog.list_products()
+    {:ok, assign(socket, products: products), layout: false}
+  end
+
   @impl true
   def mount(_params, session, socket) do
     case session["user_id"] do
