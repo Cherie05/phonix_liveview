@@ -24,11 +24,11 @@ defmodule LiveviewWeb.Router do
   # … your existing scopes …
 
   # mount Kaffy under /admin
-  scope "/admin" do
+  scope "/" do
     pipe_through [:admin]
     use Kaffy.Routes, scope: "/admin"
   end
-  
+
 
   pipeline :api do
     plug :accepts, ["json"]
