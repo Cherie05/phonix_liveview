@@ -102,4 +102,10 @@ defmodule Liveview.Catalog do
   def change_product(%Product{} = product, attrs \\ %{}) do
     Product.changeset(product, attrs)
   end
+
+  def clear_cart(%User{id: uid}) do
+  from(ci in CartItem, where: ci.user_id == ^uid)
+  |> Repo.delete_all()
+end
+
 end

@@ -164,4 +164,17 @@ end
   )
 end
 
+def complete_purchase(conn, _params) do
+  user = conn.assigns.user
+
+  # clear all cart items for this user
+  {_, _} = Liveview.Catalog.clear_cart(user)
+
+  # you could also create an Order record here
+
+  conn
+  |> put_status(:ok)
+  |> json(%{status: "ok"})
+end
+
 end

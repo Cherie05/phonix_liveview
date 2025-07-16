@@ -62,6 +62,7 @@ defmodule LiveviewWeb.Router do
     post "/cart/remove/:id", PageController, :remove_from_cart
 
     get "/checkout", PageController, :checkout
+    post "/checkout",       PageController, :complete_purchase
 
 
   end
