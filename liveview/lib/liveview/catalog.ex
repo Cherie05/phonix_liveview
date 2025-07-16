@@ -7,6 +7,40 @@ defmodule Liveview.Catalog do
   alias Liveview.Repo
 
   alias Liveview.Catalog.Product
+   alias Liveview.Catalog.CartItem
+
+
+    @doc "Add a product to the user's cart (increment if already present)"
+  def add_to_cart(%Liveview.Accounts.User{id: user_id}, product_id) do
+    case Repo.get_by(CartItem, user_id: user_id, product_id: product_id) do
+      nil ->
+        %CartItem{}
+        |> CartItem.changeset(%{user_id: user_id, product_id: product_id, quantity: 1})
+        |> Repo.insert()
+      %CartItem{} = item ->
+        item
+        |> CartItem.changeset(%{quantity: item.quantity + 1})
+        |> Repo.update()
+    end
+  end
+
+  @doc "List a user's cart items, preloading products"
+  def list_cart(user) do
+    CartItem
+    |> where(user_id: ^user.id)
+    |> preload(:product)
+    |> Repo.all()
+  end
+
+  @doc "Remove an item from the cart"
+  def remove_from_cart(%Liveview.Accounts.User{} = user, product_id) do
+    Repo.get_by(CartItem, user_id: user.id, product_id: product_id)
+    |> case do
+      nil   -> {:error, :not_found}
+      item  -> Repo.delete(item)
+    end
+  end
+
 
   @doc """
   Returns the list of products.
@@ -54,6 +88,16 @@ defmodule Liveview.Catalog do
     |> Product.changeset(attrs)
     |> Repo.insert()
   end
+
+  def count_cart_items(%Liveview.Accounts.User{id: user_id}) do
+  from(ci in CartItem, where: ci.user_id == ^user_id, select: sum(ci.quantity))
+  |> Repo.one()
+  |> case do
+    nil -> 0
+    sum -> sum
+  end
+end
+
 
   @doc """
   Updates a product.

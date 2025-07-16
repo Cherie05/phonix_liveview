@@ -29,13 +29,36 @@
       </div>
 
       <!-- secondary nav (desktop) -->
-       <div class=" flex justify-center items-center gap-2">
+       <div class=" flex justify-center items-center gap-3">
           <%= if @current_user do %>
           Welcome <strong><%= @current_user.first_name %> <%= @current_user.last_name %></strong>!
           <% else %>
             <a href={~p"/login"}>Log in</a>
           <% end %>
+
+           <div class="ml-auto flex items-center space-x-4">
+              <!-- Cart button -->
+              <button phx-click="toggle_menu" class="relative">
+                <%= raw """
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 50 50">
+                  <path fill=\"currentColor\" d=\"M35 34H13c-.3 0-.6-.2-.8-.4s-.2-.6-.1-.9l1.9-4.8L12.1 10H6V8h7c.5 0 .9.4 1 .9l2 19c0 .2 0 .3-.1.5L14.5 32H36z\"/>
+                  <path fill=\"currentColor\" d=\"m15.2 29l-.4-2L38 22.2V14H14v-2h25c.6 0 1 .4 1 1v10c0 .5-.3.9-.8 1zM36 40c-2.2 0-4-1.8-4-4s1.8-4 4-4s4 1.8 4 4s-1.8 4-4 4m0-6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m-24 6c-2.2 0-4-1.8-4-4s1.8-4 4-4s4 1.8 4 4s-1.8 4-4 4m0-6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2\"/>
+                </svg>
+                """ %>
+
+                <%= if @cart_count > 0 do %>
+                  <span
+                    class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full"
+                  >
+                    <%= @cart_count %>
+                  </span>
+                <% end %>
+              </button>
+              <!-- ... user menu button ... -->
+          </div>
        </div>
+
+       
 
       <!-- mobile button -->
       <div class="md:hidden flex items-center">
