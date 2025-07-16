@@ -6,7 +6,8 @@
 <% end %>
 
 <div class="bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4">
-    <%= form_for :session, ~p"/login", fn f -> %>
+    <%= form_for @conn, ~p"/login", [as: :session], fn f -> %>
+
   <div class="mb-4">
     <%= label f, :email, "Username or Email", class: "text-xs font-semibold" %>
     <%= text_input f, :email,

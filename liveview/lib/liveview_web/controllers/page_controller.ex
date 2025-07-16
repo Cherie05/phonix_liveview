@@ -3,37 +3,37 @@ defmodule LiveviewWeb.PageController do
 
   alias Liveview.Accounts
   alias Liveview.Accounts.User
-   alias Liveview.Catalog
+  alias Liveview.Catalog
 
-  # run this before every action (or you can scope it to only :profile)
+  # Always fetch the current user into `conn.assigns.user`
   plug :fetch_current_user
 
-  # GET /signup
+  # — Signup —
+
   def signup(conn, _params) do
     changeset = Accounts.change_user_registration(%User{})
     render(conn, :signup, changeset: changeset, layout: false)
   end
 
-  # POST /signup
-  def create_signup(conn, %{"user" => user_params}) do
-    case Accounts.register_user(user_params) do
-      {:ok, _user} ->
+  def create_signup(conn, %{"user" => params}) do
+    case Accounts.register_user(params) do
+      {:ok, _} ->
         conn
         |> put_flash(:info, "Welcome! Please log in.")
         |> redirect(to: ~p"/login")
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, :signup, changeset: changeset, layout: false)
+      {:error, %Ecto.Changeset{} = cs} ->
+        render(conn, :signup, changeset: cs, layout: false)
     end
   end
 
-  # GET /login
-  def login(conn, _params) do
-    render(conn, :login, error: nil, layout: false)
-  end
+  # — Login —
 
-  # POST /login
-  def create_login(conn, %{"session" => %{"email" => email, "password" => pass}}) do
+  def login(conn, _), do: render(conn, :login, error: nil, layout: false)
+
+  # Matches only when both are binaries
+  def create_login(conn, %{"session" => %{"email" => email, "password" => pass}})
+      when is_binary(email) and is_binary(pass) do
     case Accounts.authenticate_user(email, pass) do
       {:ok, user} ->
         conn
@@ -47,134 +47,105 @@ defmodule LiveviewWeb.PageController do
     end
   end
 
-  # GET /home
-  def home(conn, _params) do
-    render(conn, :home, layout: false)
-  end
+  # Fallback if params are missing or wrong shape
+  def create_login(conn, _), do:
+    render(conn, :login, error: "Please enter both email and password", layout: false)
 
- # run before :cart to set conn.assigns.user
-  plug :fetch_current_user when action in [:cart]
+  # — Logout —
 
-  # … your other actions …
-
-  def cart(conn, _params) do
-    user = conn.assigns.user
-
-    # if nobody’s logged in, redirect to login
-    if user == nil do
-      conn
-      |> put_flash(:error, "Please log in to view your cart.")
-      |> redirect(to: ~p"/login")
-    else
-      # load cart items and compute total
-      cart_items = Catalog.list_cart(user)
-      total =
-        cart_items
-        |> Enum.reduce(Decimal.new(0), fn item, acc ->
-          line_total = Decimal.mult(item.product.price, Decimal.new(item.quantity))
-          Decimal.add(acc, line_total)
-        end)
-
-      render(conn, :cart,
-        cart_items: cart_items,
-        total: total,
-        layout: false
-      )
-    end
-  end
-
-  def add_to_cart(conn, %{"id" => id}) do
-  user = conn.assigns.current_user
-  {:ok, _} = Catalog.add_to_cart(user, String.to_integer(id))
-  redirect(conn, to: ~p"/cart")
-end
-
-def increment(conn, %{"id" => id}) do
-   user = conn.assigns.user
-
-  {:ok, _} = Catalog.update_cart_item(user, String.to_integer(id), +1)
-  redirect(conn, to: ~p"/cart")
-end
-
-def decrement(conn, %{"id" => id}) do
-   user = conn.assigns.user
-
-  {:ok, _} = Catalog.update_cart_item(user, String.to_integer(id), -1)
-  redirect(conn, to: ~p"/cart")
-end
-
-def remove_from_cart(conn, %{"id" => id}) do
-  user = conn.assigns.user      # ← here, not :current_user
-  {:ok, _} = Catalog.remove_from_cart(user, String.to_integer(id))
-
-  conn
-  |> put_flash(:info, "Removed from cart.")
-  |> redirect(to: ~p"/cart")
-end
-
-
-  # POST /logout
-  def logout(conn, _params) do
+  def logout(conn, _), do:
     conn
     |> configure_session(drop: true)
     |> put_flash(:info, "You’ve been logged out.")
     |> redirect(to: ~p"/login")
+
+  # — Home —
+
+  def home(conn, _), do: render(conn, :home, layout: false)
+  
+
+  # — Cart —
+
+  def cart(conn, _params) do
+    case conn.assigns.user do
+      nil ->
+        conn
+        |> put_flash(:error, "Please log in to view your cart.")
+        |> redirect(to: ~p"/login")
+
+      user ->
+        items = Catalog.list_cart(user)
+        total =
+          items
+          |> Enum.reduce(Decimal.new(0), fn ci, acc ->
+            Decimal.add(acc, Decimal.mult(ci.product.price, Decimal.new(ci.quantity)))
+          end)
+
+        render(conn, :cart, cart_items: items, total: total, layout: false)
+    end
   end
 
-  # GET /profile
-  def profile(conn, _params) do
-    render(conn, :profile, user: conn.assigns.user, layout: false)
+  # — Checkout & Purchase —
+
+  def checkout(conn, _params) do
+    user = conn.assigns.user
+
+    items = Catalog.list_cart(user)
+    subtotal =
+      Enum.reduce(items, Decimal.new(0), fn ci, acc ->
+        Decimal.add(acc, Decimal.mult(ci.product.price, Decimal.new(ci.quantity)))
+      end)
+    shipping = Decimal.new(0)
+    total    = Decimal.add(subtotal, shipping)
+
+    render(conn, :checkout,
+      cart_items: items,
+      subtotal:   subtotal,
+      shipping:   shipping,
+      total:      total,
+      layout:     false
+    )
   end
 
-  # --------------------------------------------------
-  # Private plug
-  # --------------------------------------------------
+  def complete_purchase(conn, _params) do
+    user = conn.assigns.user
+
+    case Catalog.create_order_from_cart(user) do
+      {:ok, %{order: order}} ->
+        conn
+        |> put_status(:ok)
+        |> json(%{status: "ok", order_id: order.id})
+
+      {:error, _step, reason, _} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{status: "error", reason: inspect(reason)})
+    end
+  end
+
+  # — Order History —
+
+  def order_history(conn, _params) do
+    case conn.assigns.user do
+      %User{} = u ->
+        orders = Catalog.list_user_orders(u)
+        render(conn, :order_history, orders: orders, layout: false)
+
+      nil ->
+        conn
+        |> put_flash(:error, "Please log in to view your order history.")
+        |> redirect(to: ~p"/login")
+    end
+  end
+
+  # — Private plug —
+
   defp fetch_current_user(conn, _opts) do
     user =
       conn
       |> get_session(:user_id)
-      |> case do
-        nil -> nil
-        id  -> Accounts.get_user!(id)
-      end
+      |> Accounts.get_user()    # non‑bang version returns nil if not found
 
     assign(conn, :user, user)
   end
-
-  def checkout(conn, _params) do
-  # ← use conn.assigns.user instead of :current_user
-  user      = conn.assigns.user
-  items     = Catalog.list_cart(user)
-
-  subtotal =
-    Enum.reduce(items, Decimal.new(0), fn ci, acc ->
-      line = Decimal.mult(ci.product.price, Decimal.new(ci.quantity))
-      Decimal.add(acc, line)
-    end)
-
-  shipping  = Decimal.new(0)
-  total     = Decimal.add(subtotal, shipping)
-
-  render(conn, :checkout,
-    cart_items: items,
-    subtotal: subtotal,
-    shipping: shipping,
-    total: total,
-    layout: false
-  )
-end
-
-def complete_purchase(conn, _params) do
-  user = conn.assigns.user
-
-  # clear all cart items for this user
-  {_, _} = Liveview.Catalog.clear_cart(user)
-
-  # you could also create an Order record here
-
-  conn
-  |> put_status(:ok)
-  |> json(%{status: "ok"})
-end
-
 end

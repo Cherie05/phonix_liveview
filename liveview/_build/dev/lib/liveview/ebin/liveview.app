@@ -5,6 +5,8 @@
                         'Elixir.Liveview.Application',
                         'Elixir.Liveview.Catalog',
                         'Elixir.Liveview.Catalog.CartItem',
+                        'Elixir.Liveview.Catalog.Order',
+                        'Elixir.Liveview.Catalog.OrderItem',
                         'Elixir.Liveview.Catalog.Product',
                         'Elixir.Liveview.Catalog.ProductAdmin',
                         'Elixir.Liveview.Mailer','Elixir.Liveview.Repo',

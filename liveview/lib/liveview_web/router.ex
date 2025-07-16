@@ -63,6 +63,7 @@ defmodule LiveviewWeb.Router do
 
     get "/checkout", PageController, :checkout
     post "/checkout",       PageController, :complete_purchase
+    get "/orders", PageController, :order_history
 
 
   end

@@ -10,6 +10,30 @@ defmodule Liveview.Accounts do
     User.registration_changeset(user, %{})
   end
 
+
+  @doc "Checks email/password, returns {:ok, user} or {:error, :invalid_credentials}"
+  def authenticate_user(email, pass) when is_binary(email) and is_binary(pass) do
+    case Repo.get_by(User, email: email) do
+      %User{} = user ->
+        if Argon2.verify_pass(pass, user.password_hash) do
+          {:ok, user}
+        else
+          {:error, :invalid_credentials}
+        end
+
+      nil ->
+        Argon2.no_user_verify()
+        {:error, :invalid_credentials}
+    end
+  end
+
+  # fallback clause: anything else (nil, integer, etc.) → invalid
+  def authenticate_user(_, _), do:
+    (Argon2.no_user_verify(); {:error, :invalid_credentials})
+
+
+
+
   @doc "Creates a new user"
   def register_user(attrs) do
     %User{}
