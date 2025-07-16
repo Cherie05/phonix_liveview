@@ -254,11 +254,13 @@
               opacity: 0.2;
             "
           ></div>
-          <img
-            class="relative w-40"
-            src={product.image_url}
-            alt={product.name}
-          />
+<img
+  class="relative w-40"
+  src={Liveview.Uploaders.ProductImageUploader.url({product.image, product}, :original)}
+  alt={product.name}
+/>
+
+
         </div>
 
         <div class="relative text-white px-6 pb-6 mt-6">

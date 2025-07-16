@@ -18,7 +18,7 @@ defmodule Liveview.Catalog.ProductAdmin do
       name:       %{},
       category:   %{},
       price:      %{type: :decimal},
-      image_url:  %{type: :text}
+       image:      %{type: :file} 
     ]
   end
 end

@@ -14,7 +14,18 @@ config :kaffy,
   admin_title: "Liveview Admin",    # (optional)
   home_page: [schema: [:accounts, :user]]
 
-  
+
+
+config :waffle,
+  storage: Waffle.Storage.Local
+
+# serve your “uploads” folder as static:
+config :liveview, LiveviewWeb.Endpoint,
+  static_url: [path: "/"],
+  static_paths: ~w(assets fonts images favicon.ico uploads)
+
+
+
 config :liveview,
   ecto_repos: [Liveview.Repo],
   generators: [timestamp_type: :utc_datetime]

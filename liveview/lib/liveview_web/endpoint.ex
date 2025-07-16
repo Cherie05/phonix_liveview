@@ -35,6 +35,14 @@ plug Plug.Static,
     gzip: false,
     only: LiveviewWeb.static_paths()
 
+    # serve anything under ./uploads at the /uploads path
+plug Plug.Static,
+  at: "/uploads",
+  from: Path.expand("../../uploads", __DIR__),
+  gzip: false,
+  only: ~w(products)
+
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do

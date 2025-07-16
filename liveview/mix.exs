@@ -61,6 +61,8 @@ defmodule Liveview.MixProject do
        {:argon2_elixir, "~> 3.0"},
        {:phoenix_html_helpers, "~> 1.0"},
        {:kaffy, "~> 0.10.3"},
+       {:waffle, "~> 1.1"},     
+      {:waffle_ecto, "~> 0.0.12"}
     ]
   end
 
