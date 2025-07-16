@@ -52,6 +52,8 @@ defmodule LiveviewWeb.Router do
     post "/login",  PageController, :create_login
     post "/logout", PageController, :logout
 
+    get "/profile", PageController, :profile
+
 
   end
 

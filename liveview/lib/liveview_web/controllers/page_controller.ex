@@ -4,6 +4,9 @@ defmodule LiveviewWeb.PageController do
   alias Liveview.Accounts
   alias Liveview.Accounts.User
 
+  # run this before every action (or you can scope it to only :profile)
+  plug :fetch_current_user
+
   # GET /signup
   def signup(conn, _params) do
     changeset = Accounts.change_user_registration(%User{})
@@ -17,6 +20,7 @@ defmodule LiveviewWeb.PageController do
         conn
         |> put_flash(:info, "Welcome! Please log in.")
         |> redirect(to: ~p"/login")
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, :signup, changeset: changeset, layout: false)
     end
@@ -28,33 +32,50 @@ defmodule LiveviewWeb.PageController do
   end
 
   # POST /login
-def create_login(conn, %{"session" => %{"email" => email, "password" => pass}}) do
-  case Accounts.authenticate_user(email, pass) do
-    {:ok, user} ->
-      conn
-      |> put_session(:user_id, user.id)
-      |> configure_session(renew: true)
-      |> put_flash(:info, "Logged in successfully.")
-      |> redirect(to: ~p"/home")
+  def create_login(conn, %{"session" => %{"email" => email, "password" => pass}}) do
+    case Accounts.authenticate_user(email, pass) do
+      {:ok, user} ->
+        conn
+        |> put_session(:user_id, user.id)
+        |> configure_session(renew: true)
+        |> put_flash(:info, "Logged in successfully.")
+        |> redirect(to: ~p"/home")
 
-    {:error, :invalid_credentials} ->
-      render(conn, :login, error: "Invalid email or password", layout: false)
+      {:error, :invalid_credentials} ->
+        render(conn, :login, error: "Invalid email or password", layout: false)
+    end
   end
-end
 
-  # your home action...
+  # GET /home
   def home(conn, _params) do
     render(conn, :home, layout: false)
   end
 
-    @doc """
-  Logs the user out by dropping the session,
-  then redirects to the login page.
-  """
+  # POST /logout
   def logout(conn, _params) do
     conn
     |> configure_session(drop: true)
     |> put_flash(:info, "You’ve been logged out.")
     |> redirect(to: ~p"/login")
+  end
+
+  # GET /profile
+  def profile(conn, _params) do
+    render(conn, :profile, user: conn.assigns.user, layout: false)
+  end
+
+  # --------------------------------------------------
+  # Private plug
+  # --------------------------------------------------
+  defp fetch_current_user(conn, _opts) do
+    user =
+      conn
+      |> get_session(:user_id)
+      |> case do
+        nil -> nil
+        id  -> Accounts.get_user!(id)
+      end
+
+    assign(conn, :user, user)
   end
 end

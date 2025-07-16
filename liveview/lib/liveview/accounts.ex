@@ -43,5 +43,15 @@ defmodule Liveview.Accounts do
     end
   end
 
-  
+   @doc "Get a user by id, or raise if not found"
+  def get_user!(id) do
+    Repo.get!(User, id)
+  end
+
+  @doc "Get a user by id, returning nil if not found"
+  def get_user(id) do
+    Repo.get(User, id)
+  end
+
+
 end
