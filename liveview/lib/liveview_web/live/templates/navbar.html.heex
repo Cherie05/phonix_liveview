@@ -38,7 +38,7 @@
 
            <div class="ml-auto flex items-center space-x-4">
               <!-- Cart button -->
-              <button phx-click="toggle_menu" class="relative">
+              <a href={~p"/cart"} class="relative">
                 <%= raw """
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 50 50">
                   <path fill=\"currentColor\" d=\"M35 34H13c-.3 0-.6-.2-.8-.4s-.2-.6-.1-.9l1.9-4.8L12.1 10H6V8h7c.5 0 .9.4 1 .9l2 19c0 .2 0 .3-.1.5L14.5 32H36z\"/>
@@ -53,7 +53,7 @@
                     <%= @cart_count %>
                   </span>
                 <% end %>
-              </button>
+                </a>
               <!-- ... user menu button ... -->
           </div>
        </div>

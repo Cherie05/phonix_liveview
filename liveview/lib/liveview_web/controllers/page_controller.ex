@@ -3,6 +3,7 @@ defmodule LiveviewWeb.PageController do
 
   alias Liveview.Accounts
   alias Liveview.Accounts.User
+   alias Liveview.Catalog
 
   # run this before every action (or you can scope it to only :profile)
   plug :fetch_current_user
@@ -50,6 +51,67 @@ defmodule LiveviewWeb.PageController do
   def home(conn, _params) do
     render(conn, :home, layout: false)
   end
+
+ # run before :cart to set conn.assigns.user
+  plug :fetch_current_user when action in [:cart]
+
+  # … your other actions …
+
+  def cart(conn, _params) do
+    user = conn.assigns.user
+
+    # if nobody’s logged in, redirect to login
+    if user == nil do
+      conn
+      |> put_flash(:error, "Please log in to view your cart.")
+      |> redirect(to: ~p"/login")
+    else
+      # load cart items and compute total
+      cart_items = Catalog.list_cart(user)
+      total =
+        cart_items
+        |> Enum.reduce(Decimal.new(0), fn item, acc ->
+          line_total = Decimal.mult(item.product.price, Decimal.new(item.quantity))
+          Decimal.add(acc, line_total)
+        end)
+
+      render(conn, :cart,
+        cart_items: cart_items,
+        total: total,
+        layout: false
+      )
+    end
+  end
+
+  def add_to_cart(conn, %{"id" => id}) do
+  user = conn.assigns.current_user
+  {:ok, _} = Catalog.add_to_cart(user, String.to_integer(id))
+  redirect(conn, to: ~p"/cart")
+end
+
+def increment(conn, %{"id" => id}) do
+   user = conn.assigns.user
+
+  {:ok, _} = Catalog.update_cart_item(user, String.to_integer(id), +1)
+  redirect(conn, to: ~p"/cart")
+end
+
+def decrement(conn, %{"id" => id}) do
+   user = conn.assigns.user
+  
+  {:ok, _} = Catalog.update_cart_item(user, String.to_integer(id), -1)
+  redirect(conn, to: ~p"/cart")
+end
+
+def remove_from_cart(conn, %{"id" => id}) do
+  user = conn.assigns.user      # ← here, not :current_user
+  {:ok, _} = Catalog.remove_from_cart(user, String.to_integer(id))
+
+  conn
+  |> put_flash(:info, "Removed from cart.")
+  |> redirect(to: ~p"/cart")
+end
+
 
   # POST /logout
   def logout(conn, _params) do

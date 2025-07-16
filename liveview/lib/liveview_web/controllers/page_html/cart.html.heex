@@ -1,0 +1,71 @@
+<div class="p-4 max-w-xl mx-auto mt-16">
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="flex items-center justify-between px-4 py-3 bg-gray-200">
+      <h1 class="text-lg font-bold">Shopping Cart</h1>
+      <span class="text-gray-600">(<%= length(@cart_items) %> items)</span>
+    </div>
+
+    <div class="p-4">
+      <%= for item <- @cart_items do %>
+        <div class="flex items-center mb-4">
+          <img
+            class="h-16 w-16 object-contain rounded-lg mr-4"
+            src={Liveview.Uploaders.ProductImageUploader.url({item.product.image, item.product}, :original)}
+            alt={item.product.name}
+          />
+
+          <div class="flex-1">
+            <h2 class="text-lg font-bold"><%= item.product.name %></h2>
+
+            <div class="flex items-center space-x-2">
+              <!-- Decrement -->
+              <form action={~p"/cart/dec/#{item.product_id}"} method="post">
+                <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+                <button type="submit"
+                        class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                        aria-label="Decrease quantity">–</button>
+              </form>
+
+              <span class="px-2"><%= item.quantity %></span>
+
+              <!-- Increment -->
+              <form action={~p"/cart/inc/#{item.product_id}"} method="post">
+                <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+                <button type="submit"
+                        class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                        aria-label="Increase quantity">+</button>
+              </form>
+
+              <!-- Price per item -->
+              <span class="text-gray-600">
+                $<%= Decimal.to_string(item.product.price, :normal) %>
+              </span>
+            </div>
+          </div>
+
+          <!-- Remove entirely -->
+          <form action={~p"/cart/remove/#{item.product_id}"} method="post" class="ml-4">
+            <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+            <button type="submit"
+                    class="text-gray-600 hover:text-red-500"
+                    aria-label="Remove item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="m8.464 15.535l7.072-7.07m-7.072 0l7.072 7.07"/></svg>
+            </button>
+          </form>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="px-4 py-3 bg-gray-200">
+      <div class="flex justify-between items-center">
+        <span class="font-bold text-lg">Total:</span>
+        <span class="font-bold text-lg">
+          $<%= Decimal.to_string(@total, :normal) %>
+        </span>
+      </div>
+      <button class="block w-full mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+        Checkout
+      </button>
+    </div>
+  </div>
+</div>
