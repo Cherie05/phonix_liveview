@@ -216,7 +216,7 @@
   <div class="p-1 flex flex-wrap items-center justify-center">
     <%= for product <- @products do %>
       <div
-        class="flex-shrink-0 m-6 relative overflow-hidden bg-orange-500 rounded-lg max-w-xs shadow-lg group"
+        class="flex-shrink-0 m-6 relative overflow-hidden bg-[#70A3F3] rounded-lg max-w-xs shadow-lg group"
       >
         <svg
           class="absolute bottom-0 left-0 mb-8 scale-150 group-hover:scale-[1.65] transition-transform"
@@ -244,21 +244,15 @@
         </svg>
 
         <div
-          class="relative pt-10 px-10 flex items-center justify-center group-hover:scale-110 transition-transform"
+          class="relative overflow-hidden p-5 flex items-center justify-center group-hover:scale-110 transition-transform"
         >
-          <div
-            class="block absolute w-48 h-48 bottom-0 left-0 -mb-24 ml-3"
-            style="
-              background: radial-gradient(black, transparent 60%);
-              transform: rotate3d(0, 0, 1, 20deg) scale3d(1, 0.6, 1);
-              opacity: 0.2;
-            "
-          ></div>
-<img
-  class="relative w-40"
-  src={Liveview.Uploaders.ProductImageUploader.url({product.image, product}, :original)}
-  alt={product.name}
-/>
+         
+
+          <img
+            class=" w-full rounded-md"
+            src={Liveview.Uploaders.ProductImageUploader.url({product.image, product}, :original)}
+            alt={product.name}
+          />
 
 
         </div>
@@ -273,7 +267,7 @@
               <%= product.name %>
             </span>
             <span
-              class="block bg-white rounded-full text-orange-500 text-xs font-bold px-3 py-2 leading-none flex items-center"
+              class="block bg-white rounded-full text-[#70A3F3] text-xs font-bold px-3 py-2 leading-none flex items-center"
             >
               <%= 
                 product.price
