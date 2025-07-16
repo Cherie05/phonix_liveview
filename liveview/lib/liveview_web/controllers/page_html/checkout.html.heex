@@ -1,0 +1,91 @@
+<div class="bg-gray-50 w-full flex items-center justify-center min-h-screen p-4">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 md:p-8">
+    <!-- Header -->
+    <h2 class="text-2xl font-bold text-gray-800 text-center">Checkout</h2>
+    <p class="text-gray-500 text-center mt-1">Complete your purchase</p>
+
+    <!-- Product Details (loop through cart_items) -->
+    <%= for ci <- @cart_items do %>
+      <div class="mt-6 flex items-center space-x-4">
+        <img
+          src={Liveview.Uploaders.ProductImageUploader.url({ci.product.image, ci.product}, :original)}
+          alt={ci.product.name}
+          class="w-20 h-20 rounded-lg shadow"
+        />
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold text-gray-800"><%= ci.product.name %></h3>
+          <p class="text-sm text-gray-500">
+            Quantity: <%= ci.quantity %> &times; $<%= Decimal.to_string(ci.product.price, :normal) %>
+          </p>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Price Breakdown -->
+    <div class="mt-6 space-y-3">
+      <div class="flex justify-between text-gray-600">
+        <span>Subtotal</span>
+        <span>$<%= Decimal.to_string(@subtotal, :normal) %></span>
+      </div>
+
+      <div class="flex justify-between text-gray-600">
+        <span>Shipping</span>
+        <span class="text-green-500">
+          <%= if @shipping == Decimal.new(0) do %>
+            Free
+          <% else %>
+            $<%= Decimal.to_string(@shipping, :normal) %>
+          <% end %>
+        </span>
+      </div>
+
+      <div class="flex justify-between font-semibold text-gray-800">
+        <span>Total</span>
+        <span>$<%= Decimal.to_string(@total, :normal) %></span>
+      </div>
+    </div>
+
+    <!-- Payment Options -->
+    <div class="mt-6">
+      <label class="block text-gray-700 font-medium mb-2">Payment Method</label>
+      <div class="flex items-center space-x-3">
+        <button class="flex-1 bg-gray-100 hover:bg-gray-200 p-3 rounded-lg">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+            alt="Mastercard"
+            class="h-6 mx-auto"
+          />
+        </button>
+        <button class="flex-1 bg-gray-100 hover:bg-gray-200 p-3 rounded-lg">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
+            alt="Visa"
+            class="h-6 mx-auto"
+          />
+        </button>
+        <button class="flex-1 bg-gray-100 hover:bg-gray-200 p-3 rounded-lg">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+            alt="PayPal"
+            class="h-6 mx-auto"
+          />
+        </button>
+      </div>
+    </div>
+
+    <!-- Checkout Button -->
+    <%= form_for @conn, "#", [class: "mt-6 w-full"], fn _f -> %>
+      <button
+        type="submit"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow-md transition duration-200"
+      >
+        Complete Purchase
+      </button>
+    <% end %>
+
+    <!-- Secure Payment Notice -->
+    <p class="text-center text-gray-500 text-sm mt-4">
+      🔒 Secure Payment. Your information is encrypted.
+    </p>
+  </div>
+</div>

@@ -55,11 +55,13 @@ defmodule LiveviewWeb.Router do
     get "/profile", PageController, :profile
     get "/cart", PageController, :cart
 
-      # Cart management
-  post "/cart/add/:id",    PageController, :add_to_cart
-  post "/cart/inc/:id",    PageController, :increment
-  post "/cart/dec/:id",    PageController, :decrement
-  post "/cart/remove/:id", PageController, :remove_from_cart
+    # Cart management
+    post "/cart/add/:id",    PageController, :add_to_cart
+    post "/cart/inc/:id",    PageController, :increment
+    post "/cart/dec/:id",    PageController, :decrement
+    post "/cart/remove/:id", PageController, :remove_from_cart
+
+    get "/checkout", PageController, :checkout
 
 
   end

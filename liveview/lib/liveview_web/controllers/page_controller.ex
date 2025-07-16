@@ -98,7 +98,7 @@ end
 
 def decrement(conn, %{"id" => id}) do
    user = conn.assigns.user
-  
+
   {:ok, _} = Catalog.update_cart_item(user, String.to_integer(id), -1)
   redirect(conn, to: ~p"/cart")
 end
@@ -140,4 +140,28 @@ end
 
     assign(conn, :user, user)
   end
+
+  def checkout(conn, _params) do
+  # ← use conn.assigns.user instead of :current_user
+  user      = conn.assigns.user
+  items     = Catalog.list_cart(user)
+
+  subtotal =
+    Enum.reduce(items, Decimal.new(0), fn ci, acc ->
+      line = Decimal.mult(ci.product.price, Decimal.new(ci.quantity))
+      Decimal.add(acc, line)
+    end)
+
+  shipping  = Decimal.new(0)
+  total     = Decimal.add(subtotal, shipping)
+
+  render(conn, :checkout,
+    cart_items: items,
+    subtotal: subtotal,
+    shipping: shipping,
+    total: total,
+    layout: false
+  )
+end
+
 end
