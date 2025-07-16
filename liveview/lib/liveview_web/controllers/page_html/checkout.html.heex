@@ -73,15 +73,48 @@
       </div>
     </div>
 
+<div class=" flex items-center justify-center  p-4">
+  <div class="w-full  p-3">
+    <!-- … your existing checkout markup … -->
+
     <!-- Checkout Button -->
-    <%= form_for @conn, "#", [class: "mt-6 w-full"], fn _f -> %>
+    <div class="mt-6 w-full">
       <button
-        type="submit"
+        type="button"
         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow-md transition duration-200"
+        onclick="
+          // show modal
+          document.getElementById('thankYouModal').classList.remove('hidden');
+          // after 2s, go home
+          setTimeout(function(){
+            window.location.href = '/home';
+          }, 2000);
+        "
       >
         Complete Purchase
       </button>
-    <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Thank‑You Modal (hidden by default) -->
+<div
+  id="thankYouModal"
+  class="fixed inset-0 bg-opacity-50 flex items-center justify-center hidden z-50"
+>
+  <div class="bg-white rounded-lg p-8 max-w-sm text-center shadow-xl">
+    <h2 class="text-2xl font-bold text-gray-800">🎉 Order Placed!</h2>
+    <p class="mt-4 text-gray-600">Thank you for your purchase.</p>
+    <div class="mt-6">
+      <svg class="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+  </div>
+</div>
+
+
 
     <!-- Secure Payment Notice -->
     <p class="text-center text-gray-500 text-sm mt-4">
