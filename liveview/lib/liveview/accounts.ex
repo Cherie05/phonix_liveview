@@ -52,6 +52,9 @@ defmodule Liveview.Accounts do
     end
   end
 
+  @doc "Fetches a user by ID or returns nil if there’s no ID or no such user"
+def get_user(nil), do: nil
+
    @doc """
   Fetches a user by ID. Returns `nil` if no such user exists.
   Accepts either an integer or a string ID from the session.

@@ -62,7 +62,7 @@ defmodule LiveviewWeb.PageController do
   # — Home —
 
   def home(conn, _), do: render(conn, :home, layout: false)
-  
+
 
   # — Cart —
 
@@ -123,6 +123,19 @@ defmodule LiveviewWeb.PageController do
     end
   end
 
+  # GET /profile
+def profile(conn, _params) do
+  case conn.assigns.user do
+    %User{} = user ->
+      render(conn, :profile, user: user, layout: false)
+
+    nil ->
+      conn
+      |> put_flash(:error, "You must be logged in to view your profile.")
+      |> redirect(to: ~p"/login")
+  end
+end
+
   # — Order History —
 
   def order_history(conn, _params) do
@@ -140,12 +153,13 @@ defmodule LiveviewWeb.PageController do
 
   # — Private plug —
 
-  defp fetch_current_user(conn, _opts) do
-    user =
-      conn
-      |> get_session(:user_id)
-      |> Accounts.get_user()    # non‑bang version returns nil if not found
+defp fetch_current_user(conn, _opts) do
+  user =
+    case get_session(conn, :user_id) do
+      nil -> nil
+      id  -> Accounts.get_user(id)
+    end
 
-    assign(conn, :user, user)
-  end
+  assign(conn, :user, user)
+end
 end
