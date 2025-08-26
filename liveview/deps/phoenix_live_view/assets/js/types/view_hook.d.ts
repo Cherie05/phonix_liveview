@@ -128,7 +128,7 @@ export interface HookInterface {
      * @param files - The files to upload.
      */
     uploadTo(selectorOrTarget: PhxTarget, name: any, files: any): any;
-    [key: string]: any;
+    [key: PropertyKey]: any;
 }
 export interface Hook<T = object> {
     /**
@@ -168,7 +168,7 @@ export interface Hook<T = object> {
      * Called when the element's parent LiveView has reconnected to the server.
      */
     reconnected?: (this: T & HookInterface) => void;
-    [key: string]: ((this: T & HookInterface, ...args: any[]) => any) | any;
+    [key: PropertyKey]: any;
 }
 /**
  * Base class for LiveView hooks. Users extend this class to define their hooks.

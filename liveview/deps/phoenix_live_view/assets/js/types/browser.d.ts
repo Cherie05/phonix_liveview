@@ -9,7 +9,7 @@ declare namespace Browser {
     function setCookie(name: any, value: any, maxAgeSeconds: any): void;
     function getCookie(name: any): string;
     function deleteCookie(name: any): void;
-    function redirect(toURL: any, flash: any): void;
+    function redirect(toURL: any, flash: any, navigate?: (url: any) => void): void;
     function localKey(namespace: any, subkey: any): string;
     function getHashTargetEl(maybeHash: any): HTMLElement;
 }

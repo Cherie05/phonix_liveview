@@ -7,7 +7,7 @@ declare namespace DOM {
     export function isUploadInput(el: any): boolean;
     export function isAutoUpload(inputEl: any): any;
     export function findUploadInputs(node: any): any[];
-    export function findComponentNodeList(node: any, cid: any): any;
+    export function findComponentNodeList(viewId: any, cid: any, doc?: Document): any[];
     export function isPhxDestroyed(node: any): boolean;
     export function wantsNewTab(e: any): any;
     export function isUnloadableFormSubmit(e: any): boolean;
@@ -18,9 +18,7 @@ declare namespace DOM {
     export function isPhxUpdate(el: any, phxUpdate: any, updateTypes: any): boolean;
     export function findPhxSticky(el: any): any[];
     export function findPhxChildren(el: any, parentId: any): any[];
-    export function findExistingParentCIDs(node: any, cids: any): Set<any>;
-    export function filterWithinSameLiveView(nodes: any, parent: any): any;
-    export function withinSameLiveView(node: any, parent: any): boolean;
+    export function findExistingParentCIDs(viewId: any, cids: any): Set<any>;
     function _private(el: any, key: any): any;
     export { _private as private };
     export function deletePrivate(el: any, key: any): void;
@@ -42,6 +40,8 @@ declare namespace DOM {
     export function isPhxSticky(node: any): boolean;
     export function isChildOfAny(el: any, parents: any): boolean;
     export function firstPhxChild(el: any): any;
+    export function isPortalTemplate(el: any): any;
+    export function closestViewEl(el: any): any;
     export function dispatchEvent(target: any, name: any, opts?: {}): void;
     export function cloneNode(node: any, html: any): any;
     export function mergeAttrs(target: any, source: any, opts?: {}): void;

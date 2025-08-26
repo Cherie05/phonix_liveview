@@ -33,6 +33,7 @@
                         'Elixir.Postgrex.Extensions.LineSegment',
                         'Elixir.Postgrex.Extensions.Lquery',
                         'Elixir.Postgrex.Extensions.Ltree',
+                        'Elixir.Postgrex.Extensions.Ltxtquery',
                         'Elixir.Postgrex.Extensions.MACADDR',
                         'Elixir.Postgrex.Extensions.Multirange',
                         'Elixir.Postgrex.Extensions.Name',
@@ -82,7 +83,7 @@
                              table,decimal,db_connection]},
               {description,"PostgreSQL driver for Elixir"},
               {registered,[]},
-              {vsn,"0.20.0"},
+              {vsn,"0.21.1"},
               {mod,{'Elixir.Postgrex.App',[]}},
               {env,[{type_server_reap_after,180000},
                     {json_library,'Elixir.Jason'}]}]}.

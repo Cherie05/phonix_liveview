@@ -45,5 +45,6 @@ export default class DOMPatch {
     skipCIDSibling(el: any): any;
     targetCIDContainer(html: any): any;
     indexOf(parent: any, child: any): number;
+    teleport(el: any, morph: any): void;
     handleRuntimeHook(el: any, source: any): void;
 }

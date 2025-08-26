@@ -1820,7 +1820,7 @@ defmodule Phoenix.LiveView do
   ```heex
   <table>
     <tbody id="songs" phx-update="stream">
-      <tr id="songs-empty" class="only:block hidden">
+      <tr id="songs-empty" class="only:table-row hidden">
         <td colspan="2">No songs found</td>
       </tr>
       <tr
@@ -1957,6 +1957,9 @@ defmodule Phoenix.LiveView do
       here as well in order to be enforced. See `stream/4` for more information on
       limiting streams.
 
+    * `:update_only` - A boolean to only update the item in the stream. If the item does not
+      exist on the client, it will not be inserted. Defaults to `false`.
+
   ## Examples
 
   Imagine you define a stream on mount with a single item:
@@ -2006,8 +2009,9 @@ defmodule Phoenix.LiveView do
   def stream_insert(%Socket{} = socket, name, item, opts \\ []) do
     at = Keyword.get(opts, :at, -1)
     limit = Keyword.get(opts, :limit)
+    update_only = Keyword.get(opts, :update_only, false)
 
-    update_stream(socket, name, &LiveStream.insert_item(&1, item, at, limit))
+    update_stream(socket, name, &LiveStream.insert_item(&1, item, at, limit, update_only))
   end
 
   @doc """
@@ -2141,6 +2145,9 @@ defmodule Phoenix.LiveView do
   an `Phoenix.LiveView.AsyncResult` struct holding the status of the operation
   and the result when the function completes.
 
+  The function must return either a map or a keyword list with the assigns
+  to merge into the socket.
+
   The task is only started when the socket is connected.
 
   ## Options
@@ -2243,6 +2250,60 @@ defmodule Phoenix.LiveView do
   """
   defmacro start_async(socket, name, func, opts \\ []) do
     Async.start_async(socket, name, func, opts, __CALLER__)
+  end
+
+  @doc """
+  Inserts data into a stream asynchronously.
+
+  Wraps your function in a task linked to the caller, errors are wrapped.
+  The key passed to `stream_async/3` will be used as the stream name. Furthermore,
+  a regular assign with the same name gets assigned a `Phoenix.LiveView.AsyncResult`
+  struct holding the status of the operation. The stream is initialized to an empty list
+  before starting the asynchronous function, so accessing `@streams.name` is always possible.
+
+  The function must return `{:ok, Enumerable.t()}` or `{:ok, Enumerable.t(), opts}`
+  where the opts are the same as in `stream/4`. The enumerable contains the values to be streamed.
+
+  If the function returns `{:error, any()}`, the `AsyncResult` is assigned as failed and
+  the stream is not updated.
+
+  The task is only started when the socket is connected.
+
+  ## Options
+
+    * `:supervisor` - allows you to specify a `Task.Supervisor` to supervise the task.
+    * `:reset` - remove previous results during async operation when true. Possible values are
+      `true`, `false`, or a list of keys to reset. Defaults to `false`.
+
+  ## Examples
+
+      def mount(%{"slug" => slug}, _, socket) do
+        current_scope = socket.assigns.current_scope
+
+        {:ok,
+          socket
+          |> assign(:foo, "bar")
+          |> assign_async(:org, fn -> {:ok, %{org: fetch_org!(current_scope)}} end)
+          |> stream_async(:posts, fn -> {:ok, list_posts!(current_scope), limit: 10} end)
+      end
+
+  Note the `reset` option controls the async assign, not the stream:
+
+      def mount(_, _, socket) do
+        {:ok,
+          socket
+          # IMPORTANT: reset here does NOT reset the stream, but only the loading state
+          |> stream_async(:my_stream, fn -> {:ok, list_items!()} end, reset: true)
+          # This resets the stream
+          |> stream_async(:my_reset_stream, fn -> {:ok, list_items!(), reset: true} end)
+      end
+
+  Any stream options need to be returned as optional third argument in the return value
+  of the asynchronous function.
+
+  """
+  defmacro stream_async(socket, name, func, opts \\ []) do
+    Async.stream_async(socket, name, func, opts, __CALLER__)
   end
 
   @doc """

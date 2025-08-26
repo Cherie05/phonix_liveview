@@ -77,5 +77,5 @@
                              websock,hpax,telemetry]},
               {description,"A pure-Elixir HTTP server built for Plug & WebSock apps"},
               {registered,[]},
-              {vsn,"1.7.0"},
+              {vsn,"1.8.0"},
               {mod,{'Elixir.Bandit.Application',[]}}]}.

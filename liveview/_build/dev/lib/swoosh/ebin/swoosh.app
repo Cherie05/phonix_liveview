@@ -61,7 +61,7 @@
                              cowboy,plug,plug_cowboy,bandit,multipart,ex_aws]},
               {description,"Compose, deliver and test your emails easily in Elixir. Supports SMTP,\nSendgrid, Mandrill, Postmark, Mailgun and many more out of the box.\nPreview your emails in the browser. Test your email sending code.\n"},
               {registered,[]},
-              {vsn,"1.19.3"},
+              {vsn,"1.19.5"},
               {mod,{'Elixir.Swoosh.Application',[]}},
               {env,[{json_library,'Elixir.Jason'},
                     {api_client,'Elixir.Swoosh.ApiClient.Hackney'}]}]}.

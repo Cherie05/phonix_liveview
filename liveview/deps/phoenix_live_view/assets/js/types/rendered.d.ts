@@ -27,6 +27,8 @@ export default class Rendered {
     cachedFindComponent(cid: any, cdiff: any, oldc: any, newc: any, cache: any): any;
     mutableMerge(target: any, source: any): any;
     doMutableMerge(target: any, source: any): void;
+    clone(diff: any): any;
+    mergeKeyed(target: any, source: any): void;
     cloneMerge(target: any, source: any, pruneMagicId: any): any;
     componentToString(cid: any): {
         buffer: any;
@@ -38,7 +40,7 @@ export default class Rendered {
     templateStatic(part: any, templates: any): any;
     nextMagicID(): string;
     toOutputBuffer(rendered: any, templates: any, output: any, changeTracking: any, rootAttrs?: {}): void;
-    comprehensionToBuffer(rendered: any, templates: any, output: any): void;
+    comprehensionToBuffer(rendered: any, templates: any, output: any, changeTracking: any): void;
     dynamicToBuffer(rendered: any, templates: any, output: any, changeTracking: any): void;
     recursiveCIDToString(components: any, cid: any, onlyCids: any): {
         buffer: string;

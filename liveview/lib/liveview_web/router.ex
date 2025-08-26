@@ -39,6 +39,7 @@ defmodule LiveviewWeb.Router do
 
 
     live "/thermostat", ThermostatLive
+    live "/", HomeLive, :index
     live "/home", HomeLive, :index
     live "/dropdown", DropdownLive, :show
     live "/navbar", NavbarLive, :show

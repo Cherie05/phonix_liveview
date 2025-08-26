@@ -12,8 +12,14 @@ export default class View {
     ref: number;
     lastAckRef: any;
     childJoins: number;
-    loaderTimer: NodeJS.Timeout;
-    disconnectedTimer: NodeJS.Timeout;
+    /**
+     * @type {ReturnType<typeof setTimeout> | null}
+     */
+    loaderTimer: ReturnType<typeof setTimeout> | null;
+    /**
+     * @type {ReturnType<typeof setTimeout> | null}
+     */
+    disconnectedTimer: ReturnType<typeof setTimeout> | null;
     pendingDiffs: any[];
     pendingForms: Set<any>;
     redirect: boolean;
@@ -30,6 +36,7 @@ export default class View {
     children: {};
     formsForRecovery: {};
     channel: any;
+    portalElementIds: Set<any>;
     setHref(href: any): void;
     setRedirect(href: any): void;
     isMain(): any;
@@ -45,7 +52,7 @@ export default class View {
     triggerReconnected(): void;
     log(kind: any, msgCallback: any): void;
     transition(time: any, onStart: any, onDone?: () => void): void;
-    withinTargets(phxTarget: any, callback: any, dom: Document, viewEl: any): any;
+    withinTargets(phxTarget: any, callback: any, dom?: Document): any;
     applyDiff(type: any, rawDiff: any, callback: any): void;
     onJoin(resp: any): void;
     rendered: Rendered;
@@ -54,7 +61,8 @@ export default class View {
         live_patch: any;
     }, html: any, streams: any, events: any): void;
     attachTrueDocEl(): void;
-    execNewMounted(parent?: any): void;
+    execNewMounted(parent?: Document): void;
+    all(parent: any, selector: any, callback: any): void;
     applyJoinPatch(live_patch: any, html: any, streams: any, events: any): void;
     triggerBeforeUpdateHook(fromEl: any, toEl: any): any;
     maybeMounted(el: any): void;
@@ -70,7 +78,7 @@ export default class View {
     isJoinPending(): boolean;
     ackJoin(_child: any): void;
     onAllChildJoinsComplete(): void;
-    update(diff: any, events: any): number;
+    update(diff: any, events: any, isPending?: boolean): boolean;
     renderContainer(diff: any, kind: any): any;
     componentPatch(diff: any, cid: any): boolean;
     getHook(el: any): any;
@@ -136,5 +144,8 @@ export default class View {
     ownsElement(el: any): boolean;
     submitForm(form: any, targetCtx: any, phxEvent: any, submitter: any, opts?: {}): void;
     binding(kind: any): any;
+    pushPortalElementId(id: any): void;
+    dropPortalElementId(id: any): void;
+    destroyPortalElements(): void;
 }
 import Rendered from "./rendered";
