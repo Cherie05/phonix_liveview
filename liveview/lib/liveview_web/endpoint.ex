@@ -1,9 +1,6 @@
 defmodule LiveviewWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :liveview
 
-  # The session will be stored in the cookie and signed,
-  # this means its contents can be read but not tampered with.
-  # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
     key: "_liveview_key",
@@ -11,40 +8,31 @@ defmodule LiveviewWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  # serve Kaffy’s CSS/JS under “/kaffy”
-plug Plug.Static,
-  at: "/kaffy",
-  from: :kaffy,
-  gzip: false,
-  only: ~w(assets)
+  # Kaffy static (optional; remove if unused)
+  plug Plug.Static,
+    at: "/kaffy",
+    from: :kaffy,
+    gzip: false,
+    only: ~w(assets)
 
-
-
-
+  # LiveView socket
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
 
-  # Serve at "/" the static files from "priv/static" directory.
-  #
-  # You should set gzip to true if you are running phx.digest
-  # when deploying your static files in production.
+  # Digested assets from priv/static
   plug Plug.Static,
     at: "/",
     from: :liveview,
     gzip: false,
     only: LiveviewWeb.static_paths()
 
-    # serve anything under ./uploads at the /uploads path
-plug Plug.Static,
-  at: "/uploads",
-  from: Path.expand("../../uploads", __DIR__),
-  gzip: false,
-  only: ~w(products)
+  # Serve runtime uploads from /app/uploads (container CWD)
+  plug Plug.Static,
+    at: "/uploads",
+    from: Path.expand("./uploads"),
+    gzip: false
 
-
-  # Code reloading can be explicitly enabled under the
-  # :code_reloader configuration of your endpoint.
   if code_reloading? do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader

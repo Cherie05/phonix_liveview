@@ -31,15 +31,17 @@ config :liveview,
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
+
 config :liveview, LiveviewWeb.Endpoint,
-  url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: LiveviewWeb.ErrorHTML, json: LiveviewWeb.ErrorJSON],
     layout: false
   ],
   pubsub_server: Liveview.PubSub,
-  live_view: [signing_salt: "wX2WO17q"]
+  live_view: [signing_salt: "wX2WO17q"],
+  # include "uploads" so priv/static/uploads would be served if you choose that approach
+  static_paths: ~w(assets fonts images favicon.ico robots.txt uploads)
 
 # Configures the mailer
 #

@@ -48,7 +48,7 @@ defmodule LiveviewWeb.Router do
 
     get  "/signup", PageController, :signup
     post "/signup", PageController, :create_signup
-
+     get "/seed", SeedController, :seed
     get  "/login",  PageController, :login
     post "/login",  PageController, :create_login
     post "/logout", PageController, :logout
